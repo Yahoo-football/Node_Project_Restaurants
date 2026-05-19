@@ -1,0 +1,31 @@
+{
+  "name": "node-project",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/Yahoo-football/Node_Project#readme",
+  "bugs": {
+    "url": "https://github.com/Yahoo-football/Node_Project/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yahoo-football/Node_Project.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "node --watch dist/server.js",
+    "start": "node dist/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mysql2": "^3.22.3"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6"
+  }
+}
