@@ -17,7 +17,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "node --watch dist/server.js",
-    "start": "node dist/server.js",
+    "start": " npm run build && node dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -26,6 +26,8 @@
     "mysql2": "^3.22.3"
   },
   "devDependencies": {
-    "@types/express": "^5.0.6"
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "jsonwebtoken": "^9.0.3"
   }
 }
