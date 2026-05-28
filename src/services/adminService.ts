@@ -1,6 +1,12 @@
 import crypto from 'crypto';
 import adminRepository from '../repositories/adminRepositories.js';
-import { type AdminCreateUserInput, type AdminUpdateUserInput } from '../models/adminModel.js';
+import {
+  type AdminCreateUserInput,
+  type AdminUpdateUserInput,
+  type DashboardSummary,
+  type SalesSummary,
+  type TopProductSummary,
+} from '../models/adminModel.js';
 import { type PublicUser, type UserRole, User } from '../models/userModel.js';
 
 class AdminService {
@@ -79,6 +85,18 @@ class AdminService {
     }
 
     await adminRepository.deleteUser(id);
+  }
+
+  public async getDashboardSummary(): Promise<DashboardSummary> {
+    return adminRepository.getDashboardSummary();
+  }
+
+  public async getSalesSummary(): Promise<SalesSummary[]> {
+    return adminRepository.getSalesSummary();
+  }
+
+  public async getTopProducts(): Promise<TopProductSummary[]> {
+    return adminRepository.getTopProducts();
   }
 
   private validateCreateInput(data: AdminCreateUserInput): void {

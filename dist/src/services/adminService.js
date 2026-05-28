@@ -64,6 +64,15 @@ class AdminService {
         }
         await adminRepository.deleteUser(id);
     }
+    async getDashboardSummary() {
+        return adminRepository.getDashboardSummary();
+    }
+    async getSalesSummary() {
+        return adminRepository.getSalesSummary();
+    }
+    async getTopProducts() {
+        return adminRepository.getTopProducts();
+    }
     validateCreateInput(data) {
         if (!data.name?.trim()) {
             throw new Error('Name is required');

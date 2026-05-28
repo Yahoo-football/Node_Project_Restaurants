@@ -64,6 +64,33 @@ class AdminController {
     }
   };
 
+  public getDashboard = async (_req: Request, res: Response): Promise<void> => {
+    try {
+      const summary = await adminService.getDashboardSummary();
+      res.status(200).json({ message: 'Dashboard fetched successfully', data: summary });
+    } catch (error) {
+      this.handleError(error, res);
+    }
+  };
+
+  public getSales = async (_req: Request, res: Response): Promise<void> => {
+    try {
+      const sales = await adminService.getSalesSummary();
+      res.status(200).json({ message: 'Sales report fetched successfully', data: sales });
+    } catch (error) {
+      this.handleError(error, res);
+    }
+  };
+
+  public getTopProducts = async (_req: Request, res: Response): Promise<void> => {
+    try {
+      const products = await adminService.getTopProducts();
+      res.status(200).json({ message: 'Top products fetched successfully', data: products });
+    } catch (error) {
+      this.handleError(error, res);
+    }
+  };
+
   private handleError(error: unknown, res: Response): void {
     const message = error instanceof Error ? error.message : 'Internal server error';
     const statusCode =
