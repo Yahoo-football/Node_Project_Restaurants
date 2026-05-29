@@ -9,5 +9,6 @@ adminRouter.get('/users/:id', adminController.getUserById);
 adminRouter.post('/users', adminController.createUser);
 adminRouter.put('/users/:id', adminController.updateUser);
 adminRouter.delete('/users/:id', adminController.deleteUser);
+adminRouter.get('/dashboard', adminController.getDashboard);
 export default adminRouter;
 //# sourceMappingURL=adminRoute.js.map

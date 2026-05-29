@@ -4,7 +4,7 @@ import {} from '../models/adminModel.js';
 import { User } from '../models/userModel.js';
 class AdminService {
     manageableRoles = ['admin', 'staff'];
-    allowedRoles = ['admin', 'staff', 'customer'];
+    allowedRoles = ['admin', 'staff'];
     async getUsers() {
         const users = await adminRepository.findAllUsers();
         return users.map((user) => new User(user).toPublicObject());
@@ -40,6 +40,9 @@ class AdminService {
         if (!existingUser) {
             throw new Error('User not found');
         }
+        if (!this.isManageableRole(existingUser.role)) {
+            throw new Error('Admin can only update admin or staff accounts');
+        }
         const normalizedEmail = data.email?.toLowerCase().trim();
         if (normalizedEmail && normalizedEmail !== existingUser.email) {
             const emailOwner = await adminRepository.findUserByEmail(normalizedEmail);
@@ -62,7 +65,13 @@ class AdminService {
         if (!existingUser) {
             throw new Error('User not found');
         }
+        if (!this.isManageableRole(existingUser.role)) {
+            throw new Error('Admin can only delete admin or staff accounts');
+        }
         await adminRepository.deleteUser(id);
+    }
+    async getDashboardSummary() {
+        return adminRepository.getDashboardSummary();
     }
     validateCreateInput(data) {
         if (!data.name?.trim()) {
@@ -85,6 +94,9 @@ class AdminService {
         if (data.password !== undefined && data.password.length < 6) {
             throw new Error('Password must be at least 6 characters long');
         }
+    }
+    isManageableRole(role) {
+        return this.manageableRoles.includes(role);
     }
     validateUserId(id) {
         if (!Number.isInteger(id) || id <= 0) {

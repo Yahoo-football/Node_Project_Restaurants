@@ -61,6 +61,15 @@ class AdminController {
             this.handleError(error, res);
         }
     };
+    getDashboard = async (_req, res) => {
+        try {
+            const summary = await adminService.getDashboardSummary();
+            res.status(200).json({ message: 'Dashboard fetched successfully', data: summary });
+        }
+        catch (error) {
+            this.handleError(error, res);
+        }
+    };
     handleError(error, res) {
         const message = error instanceof Error ? error.message : 'Internal server error';
         const statusCode = message === 'User not found'

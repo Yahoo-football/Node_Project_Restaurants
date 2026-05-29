@@ -1,11 +1,15 @@
 import crypto from 'crypto';
 import adminRepository from '../repositories/adminRepositories.js';
-import { type AdminCreateUserInput, type AdminUpdateUserInput } from '../models/adminModel.js';
+import {
+  type AdminCreateUserInput,
+  type AdminUpdateUserInput,
+  type DashboardSummary,
+} from '../models/adminModel.js';
 import { type PublicUser, type UserRole, User } from '../models/userModel.js';
 
 class AdminService {
   private readonly manageableRoles: Array<Extract<UserRole, 'admin' | 'staff'>> = ['admin', 'staff'];
-  private readonly allowedRoles: UserRole[] = ['admin', 'staff', 'customer'];
+  private readonly allowedRoles: Array<Extract<UserRole, 'admin' | 'staff'>> = ['admin', 'staff'];
 
   public async getUsers(): Promise<PublicUser[]> {
     const users = await adminRepository.findAllUsers();
@@ -51,6 +55,10 @@ class AdminService {
       throw new Error('User not found');
     }
 
+    if (!this.isManageableRole(existingUser.role)) {
+      throw new Error('Admin can only update admin or staff accounts');
+    }
+
     const normalizedEmail = data.email?.toLowerCase().trim();
     if (normalizedEmail && normalizedEmail !== existingUser.email) {
       const emailOwner = await adminRepository.findUserByEmail(normalizedEmail);
@@ -78,7 +86,15 @@ class AdminService {
       throw new Error('User not found');
     }
 
+    if (!this.isManageableRole(existingUser.role)) {
+      throw new Error('Admin can only delete admin or staff accounts');
+    }
+
     await adminRepository.deleteUser(id);
+  }
+
+  public async getDashboardSummary(): Promise<DashboardSummary> {
+    return adminRepository.getDashboardSummary();
   }
 
   private validateCreateInput(data: AdminCreateUserInput): void {
@@ -107,6 +123,10 @@ class AdminService {
     if (data.password !== undefined && data.password.length < 6) {
       throw new Error('Password must be at least 6 characters long');
     }
+  }
+
+  private isManageableRole(role: UserRole): role is Extract<UserRole, 'admin' | 'staff'> {
+    return this.manageableRoles.includes(role as Extract<UserRole, 'admin' | 'staff'>);
   }
 
   private validateUserId(id: number): void {

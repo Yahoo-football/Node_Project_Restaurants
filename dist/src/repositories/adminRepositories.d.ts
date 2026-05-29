@@ -1,3 +1,4 @@
+import { type DashboardSummary } from '../models/adminModel.js';
 import { type AdminCreateUserInput, type AdminUpdateUserInput } from '../models/adminModel.js';
 import { type UserRecord } from '../models/userModel.js';
 declare class AdminRepository {
@@ -11,6 +12,7 @@ declare class AdminRepository {
         password?: string;
     }): Promise<UserRecord>;
     deleteUser(id: number): Promise<void>;
+    getDashboardSummary(): Promise<DashboardSummary>;
 }
 declare const _default: AdminRepository;
 export default _default;

@@ -1,9 +1,11 @@
 import { type ResultSetHeader, type RowDataPacket } from 'mysql2/promise';
 import database from '../config/db.js';
+import { type DashboardSummary } from '../models/adminModel.js';
 import { type AdminCreateUserInput, type AdminUpdateUserInput } from '../models/adminModel.js';
 import { type UserRecord } from '../models/userModel.js';
 
 interface UserRow extends RowDataPacket, UserRecord {}
+interface DashboardRow extends RowDataPacket, DashboardSummary {}
 
 class AdminRepository {
   public async findAllUsers(): Promise<UserRecord[]> {
@@ -98,6 +100,34 @@ class AdminRepository {
 
   public async deleteUser(id: number): Promise<void> {
     await database.getPool().execute<ResultSetHeader>('DELETE FROM users WHERE id = ?', [id]);
+  }
+
+  public async getDashboardSummary(): Promise<DashboardSummary> {
+    const [rows] = await database.getPool().execute<DashboardRow[]>(
+      `
+        SELECT
+          COALESCE(SUM(CASE WHEN p.status = 'paid' THEN p.amount ELSE 0 END), 0) AS totalSales,
+          COUNT(DISTINCT o.id) AS totalOrders,
+          COALESCE(SUM(CASE WHEN o.status = 'pending' THEN 1 ELSE 0 END), 0) AS pendingOrders,
+          COALESCE(SUM(CASE WHEN o.status = 'completed' THEN 1 ELSE 0 END), 0) AS completedOrders,
+          COALESCE(SUM(CASE WHEN p.status = 'failed' THEN 1 ELSE 0 END), 0) AS failedPayments
+        FROM orders o
+        LEFT JOIN payments p ON p.order_id = o.id
+      `,
+    );
+
+    const summary = rows[0];
+    if (!summary) {
+      return { totalSales: 0, totalOrders: 0, pendingOrders: 0, completedOrders: 0, failedPayments: 0 };
+    }
+
+    return {
+      totalSales: Number(summary.totalSales),
+      totalOrders: Number(summary.totalOrders),
+      pendingOrders: Number(summary.pendingOrders),
+      completedOrders: Number(summary.completedOrders),
+      failedPayments: Number(summary.failedPayments),
+    };
   }
 }
 

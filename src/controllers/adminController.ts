@@ -64,6 +64,15 @@ class AdminController {
     }
   };
 
+  public getDashboard = async (_req: Request, res: Response): Promise<void> => {
+    try {
+      const summary = await adminService.getDashboardSummary();
+      res.status(200).json({ message: 'Dashboard fetched successfully', data: summary });
+    } catch (error) {
+      this.handleError(error, res);
+    }
+  };
+
   private handleError(error: unknown, res: Response): void {
     const message = error instanceof Error ? error.message : 'Internal server error';
     const statusCode =
