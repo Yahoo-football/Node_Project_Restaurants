@@ -70,24 +70,6 @@ class AdminController {
             this.handleError(error, res);
         }
     };
-    getSales = async (_req, res) => {
-        try {
-            const sales = await adminService.getSalesSummary();
-            res.status(200).json({ message: 'Sales report fetched successfully', data: sales });
-        }
-        catch (error) {
-            this.handleError(error, res);
-        }
-    };
-    getTopProducts = async (_req, res) => {
-        try {
-            const products = await adminService.getTopProducts();
-            res.status(200).json({ message: 'Top products fetched successfully', data: products });
-        }
-        catch (error) {
-            this.handleError(error, res);
-        }
-    };
     handleError(error, res) {
         const message = error instanceof Error ? error.message : 'Internal server error';
         const statusCode = message === 'User not found'

@@ -6,8 +6,6 @@ declare class AdminController {
     updateUser: (req: Request, res: Response) => Promise<void>;
     deleteUser: (req: Request, res: Response) => Promise<void>;
     getDashboard: (_req: Request, res: Response) => Promise<void>;
-    getSales: (_req: Request, res: Response) => Promise<void>;
-    getTopProducts: (_req: Request, res: Response) => Promise<void>;
     private handleError;
 }
 declare const _default: AdminController;

@@ -6,12 +6,12 @@ export class MenuItem {
     toPublicObject() {
         return {
             id: this.data.id,
-            categoryId: this.data.category_id,
-            categoryName: this.data.category_name ?? null,
             name: this.data.name,
             description: this.data.description,
             price: Number(this.data.price),
-            isAvailable: Boolean(this.data.is_available),
+            image: this.data.image ?? null,
+            categoryId: this.data.category_id ?? null,
+            status: this.data.status ?? null,
             createdAt: this.data.created_at,
         };
     }

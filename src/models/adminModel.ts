@@ -13,7 +13,7 @@ export interface AdminUpdateUserInput {
   name?: string;
   email?: string;
   password?: string;
-  role?: UserRole;
+  role?: Extract<UserRole, 'admin' | 'staff'>;
   phone?: string | null;
 }
 
@@ -27,19 +27,6 @@ export interface DashboardSummary {
   pendingOrders: number;
   completedOrders: number;
   failedPayments: number;
-}
-
-export interface SalesSummary {
-  period: string;
-  revenue: number;
-  orders: number;
-}
-
-export interface TopProductSummary {
-  menuItemId: number;
-  name: string;
-  quantitySold: number;
-  revenue: number;
 }
 
 export interface UpdateOrderStatusByAdminInput {

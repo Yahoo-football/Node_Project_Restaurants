@@ -5,7 +5,6 @@ declare class MenuService {
     updateMenuItem(id: number, data: UpdateMenuItemInput): Promise<PublicMenuItem>;
     deleteMenuItem(id: number): Promise<void>;
     private validateCreateInput;
-    private ensureCategoryExists;
     private validateId;
 }
 declare const _default: MenuService;

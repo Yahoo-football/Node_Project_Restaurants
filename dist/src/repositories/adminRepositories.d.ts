@@ -1,4 +1,4 @@
-import { type DashboardSummary, type SalesSummary, type TopProductSummary } from '../models/adminModel.js';
+import { type DashboardSummary } from '../models/adminModel.js';
 import { type AdminCreateUserInput, type AdminUpdateUserInput } from '../models/adminModel.js';
 import { type UserRecord } from '../models/userModel.js';
 declare class AdminRepository {
@@ -13,8 +13,6 @@ declare class AdminRepository {
     }): Promise<UserRecord>;
     deleteUser(id: number): Promise<void>;
     getDashboardSummary(): Promise<DashboardSummary>;
-    getSalesSummary(): Promise<SalesSummary[]>;
-    getTopProducts(): Promise<TopProductSummary[]>;
 }
 declare const _default: AdminRepository;
 export default _default;

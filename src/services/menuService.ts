@@ -1,4 +1,3 @@
-import categoryRepository from '../repositories/categoryRepositories.js';
 import menuRepository from '../repositories/menuRepositories.js';
 import { MenuItem, type CreateMenuItemInput, type PublicMenuItem, type UpdateMenuItemInput } from '../models/menuModel.js';
 
@@ -12,11 +11,12 @@ class MenuService {
     await this.validateCreateInput(data);
 
     const created = await menuRepository.create({
-      categoryId: data.categoryId,
       name: data.name.trim(),
       price: data.price,
       ...(data.description?.trim() ? { description: data.description.trim() } : {}),
-      ...(data.isAvailable !== undefined ? { isAvailable: data.isAvailable } : {}),
+      ...(data.image !== undefined ? { image: data.image } : {}),
+      ...(data.categoryId !== undefined ? { categoryId: data.categoryId } : {}),
+      ...(data.status !== undefined ? { status: data.status } : {}),
     });
 
     return new MenuItem(created).toPublicObject();
@@ -30,22 +30,19 @@ class MenuService {
       throw new Error('Menu item not found');
     }
 
-    if (data.categoryId !== undefined) {
-      await this.ensureCategoryExists(data.categoryId);
-    }
-
     if (data.price !== undefined && data.price < 0) {
       throw new Error('Price must be a positive number');
     }
 
     const updated = await menuRepository.update(id, {
-      ...(data.categoryId !== undefined ? { categoryId: data.categoryId } : {}),
       ...(data.name !== undefined ? { name: data.name.trim() } : {}),
       ...(data.description !== undefined
         ? { description: data.description === null ? null : data.description.trim() }
         : {}),
       ...(data.price !== undefined ? { price: data.price } : {}),
-      ...(data.isAvailable !== undefined ? { isAvailable: data.isAvailable } : {}),
+      ...(data.image !== undefined ? { image: data.image } : {}),
+      ...(data.categoryId !== undefined ? { categoryId: data.categoryId } : {}),
+      ...(data.status !== undefined ? { status: data.status } : {}),
     });
 
     return new MenuItem(updated).toPublicObject();
@@ -63,23 +60,12 @@ class MenuService {
   }
 
   private async validateCreateInput(data: CreateMenuItemInput): Promise<void> {
-    this.validateId(data.categoryId);
-
     if (!data.name?.trim()) {
       throw new Error('Menu item name is required');
     }
 
     if (data.price < 0) {
       throw new Error('Price must be a positive number');
-    }
-
-    await this.ensureCategoryExists(data.categoryId);
-  }
-
-  private async ensureCategoryExists(categoryId: number): Promise<void> {
-    const category = await categoryRepository.findById(categoryId);
-    if (!category) {
-      throw new Error('Category not found');
     }
   }
 

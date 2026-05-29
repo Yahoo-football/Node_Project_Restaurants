@@ -8,10 +8,9 @@ class MenuRepository {
   public async findAll(): Promise<MenuItemRecord[]> {
     const [rows] = await database.getPool().execute<MenuItemRow[]>(
       `
-        SELECT m.*, c.name AS category_name
-        FROM menu_items m
-        LEFT JOIN categories c ON c.id = m.category_id
-        ORDER BY c.name ASC, m.name ASC
+        SELECT *
+        FROM menu_items
+        ORDER BY name ASC
       `,
     );
 
@@ -21,10 +20,9 @@ class MenuRepository {
   public async findById(id: number): Promise<MenuItemRecord | null> {
     const [rows] = await database.getPool().execute<MenuItemRow[]>(
       `
-        SELECT m.*, c.name AS category_name
-        FROM menu_items m
-        LEFT JOIN categories c ON c.id = m.category_id
-        WHERE m.id = ?
+        SELECT *
+        FROM menu_items
+        WHERE id = ?
         LIMIT 1
       `,
       [id],
@@ -36,10 +34,17 @@ class MenuRepository {
   public async create(data: CreateMenuItemInput): Promise<MenuItemRecord> {
     const [result] = await database.getPool().execute<ResultSetHeader>(
       `
-        INSERT INTO menu_items (category_id, name, description, price, is_available)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO menu_items (name, description, price, image, category_id, status)
+        VALUES (?, ?, ?, ?, ?, ?)
       `,
-      [data.categoryId, data.name, data.description ?? null, data.price, data.isAvailable ?? true],
+      [
+        data.name,
+        data.description ?? null,
+        data.price,
+        data.image ?? null,
+        data.categoryId ?? null,
+        data.status ?? null,
+      ],
     );
 
     const created = await this.findById(result.insertId);
@@ -54,11 +59,6 @@ class MenuRepository {
     const updates: string[] = [];
     const values: Array<string | number | boolean | null> = [];
 
-    if (data.categoryId !== undefined) {
-      updates.push('category_id = ?');
-      values.push(data.categoryId);
-    }
-
     if (data.name !== undefined) {
       updates.push('name = ?');
       values.push(data.name);
@@ -69,15 +69,27 @@ class MenuRepository {
       values.push(data.description);
     }
 
+    if (data.image !== undefined) {
+      updates.push('image = ?');
+      values.push(data.image);
+    }
+
+    if (data.categoryId !== undefined) {
+      updates.push('category_id = ?');
+      values.push(data.categoryId);
+    }
+
+    if (data.status !== undefined) {
+      updates.push('status = ?');
+      values.push(data.status);
+    }
+
     if (data.price !== undefined) {
       updates.push('price = ?');
       values.push(data.price);
     }
 
-    if (data.isAvailable !== undefined) {
-      updates.push('is_available = ?');
-      values.push(data.isAvailable);
-    }
+    
 
     if (updates.length > 0) {
       values.push(id);

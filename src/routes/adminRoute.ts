@@ -13,7 +13,5 @@ adminRouter.post('/users', adminController.createUser);
 adminRouter.put('/users/:id', adminController.updateUser);
 adminRouter.delete('/users/:id', adminController.deleteUser);
 adminRouter.get('/dashboard', adminController.getDashboard);
-adminRouter.get('/sales', adminController.getSales);
-adminRouter.get('/top-products', adminController.getTopProducts);
 
 export default adminRouter;
