@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import adminController from '../controllers/adminController.js';
+import adminStaffController from '../controllers/adminStaffController.js';
 import authMiddleware from '../middlewares/authMiddleware.js';
 import adminMiddleware from '../middlewares/adminMiddleware.js';
 const adminRouter = Router();
@@ -9,5 +10,10 @@ adminRouter.get('/users/:id', adminController.getUserById);
 adminRouter.post('/users', adminController.createUser);
 adminRouter.put('/users/:id', adminController.updateUser);
 adminRouter.delete('/users/:id', adminController.deleteUser);
+adminRouter.get('/staff', adminStaffController.getAll);
+adminRouter.get('/staff/:id', adminStaffController.getById);
+adminRouter.post('/staff', adminStaffController.create);
+adminRouter.put('/staff/:id', adminStaffController.update);
+adminRouter.delete('/staff/:id', adminStaffController.delete);
 export default adminRouter;
 //# sourceMappingURL=adminRoute.js.map
