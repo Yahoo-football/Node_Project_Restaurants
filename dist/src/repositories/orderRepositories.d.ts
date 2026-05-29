@@ -1,8 +1,9 @@
-import { type OrderRecord, type UpdateOrderStatusInput } from '../models/orderModel.js';
+import { type OrderItemRecord, type OrderRecord, type OrderStatus } from '../models/orderModel.js';
 declare class OrderRepository {
-    findAll(): Promise<OrderRecord[]>;
-    findById(id: number): Promise<OrderRecord | null>;
-    updateStatus(id: number, data: UpdateOrderStatusInput): Promise<OrderRecord>;
+    findAllOrders(): Promise<OrderRecord[]>;
+    findOrderById(id: number): Promise<OrderRecord | null>;
+    findItemsByOrderIds(orderIds: number[]): Promise<OrderItemRecord[]>;
+    updateOrderStatus(id: number, status: OrderStatus, staffId: number | null): Promise<void>;
 }
 declare const _default: OrderRepository;
 export default _default;

@@ -1,33 +1,57 @@
-import orderRepository from '../repositories/orderRepositories.js';
-import authRepository from '../repositories/authRepositories.js';
 import { Order } from '../models/orderModel.js';
+import orderRepository from '../repositories/orderRepositories.js';
 class OrderService {
-    allowedStatuses = ['pending', 'preparing', 'ready', 'completed', 'cancelled'];
-    async getOrders() {
-        const orders = await orderRepository.findAll();
-        return orders.map((order) => new Order(order).toPublicObject());
+    async getAllOrders() {
+        const orders = await orderRepository.findAllOrders();
+        const items = await orderRepository.findItemsByOrderIds(orders.map((order) => order.id));
+        return orders.map((order) => new Order(order, this.itemsForOrder(items, order.id)).toPublicObject());
     }
-    async updateOrderStatus(id, status, staffId) {
+    async getOrderById(id) {
         this.validateId(id);
-        if (!this.allowedStatuses.includes(status)) {
-            throw new Error('Invalid order status');
-        }
-        const existing = await orderRepository.findById(id);
-        if (!existing) {
+        const order = await orderRepository.findOrderById(id);
+        if (!order) {
             throw new Error('Order not found');
         }
-        if (staffId !== undefined && staffId !== null) {
-            const staff = await authRepository.findUserById(staffId);
-            if (!staff || staff.role !== 'staff') {
-                throw new Error('Assigned staff user not found');
-            }
+        const items = await orderRepository.findItemsByOrderIds([id]);
+        return new Order(order, items).toPublicObject();
+    }
+    async acceptOrder(orderId, staffId) {
+        this.validateId(orderId);
+        this.validateStaffId(staffId);
+        const order = await orderRepository.findOrderById(orderId);
+        if (!order) {
+            throw new Error('Order not found');
         }
-        const updated = await orderRepository.updateStatus(id, { status, ...(staffId !== undefined ? { staffId } : {}) });
-        return new Order(updated).toPublicObject();
+        if (order.status !== 'pending') {
+            throw new Error('Only pending orders can be accepted');
+        }
+        await orderRepository.updateOrderStatus(orderId, 'completed', staffId);
+        return this.getOrderById(orderId);
+    }
+    async cancelOrder(orderId, staffId) {
+        this.validateId(orderId);
+        this.validateStaffId(staffId);
+        const order = await orderRepository.findOrderById(orderId);
+        if (!order) {
+            throw new Error('Order not found');
+        }
+        if (order.status === 'completed' || order.status === 'cancelled') {
+            throw new Error('Completed or cancelled orders cannot be cancelled');
+        }
+        await orderRepository.updateOrderStatus(orderId, 'cancelled', order.staff_id ?? staffId);
+        return this.getOrderById(orderId);
+    }
+    itemsForOrder(items, orderId) {
+        return items.filter((item) => item.order_id === orderId);
     }
     validateId(id) {
         if (!Number.isInteger(id) || id <= 0) {
             throw new Error('Invalid order id');
+        }
+    }
+    validateStaffId(id) {
+        if (!Number.isInteger(id) || id <= 0) {
+            throw new Error('Invalid staff id');
         }
     }
 }

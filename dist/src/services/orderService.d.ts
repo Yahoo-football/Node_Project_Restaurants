@@ -1,9 +1,12 @@
-import { type OrderStatus, type PublicOrder } from '../models/orderModel.js';
+import { type PublicOrder } from '../models/orderModel.js';
 declare class OrderService {
-    private readonly allowedStatuses;
-    getOrders(): Promise<PublicOrder[]>;
-    updateOrderStatus(id: number, status: OrderStatus, staffId?: number | null): Promise<PublicOrder>;
+    getAllOrders(): Promise<PublicOrder[]>;
+    getOrderById(id: number): Promise<PublicOrder>;
+    acceptOrder(orderId: number, staffId: number): Promise<PublicOrder>;
+    cancelOrder(orderId: number, staffId: number): Promise<PublicOrder>;
+    private itemsForOrder;
     private validateId;
+    private validateStaffId;
 }
 declare const _default: OrderService;
 export default _default;
