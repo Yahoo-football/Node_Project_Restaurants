@@ -3,7 +3,7 @@ export interface AdminCreateUserInput {
     name: string;
     email: string;
     password: string;
-    role: Extract<UserRole, 'admin' | 'staff'>;
+    role: Extract<UserRole, 'admin'>;
     phone?: string;
 }
 export interface AdminUpdateUserInput {

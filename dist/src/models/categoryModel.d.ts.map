@@ -1,1 +1,1 @@
-{"version":3,"file":"categoryModel.d.ts","sourceRoot":"","sources":["../../../src/models/categoryModel.ts"],"names":[],"mappings":""}
+{"version":3,"file":"categoryModel.d.ts","sourceRoot":"","sources":["../../../src/models/categoryModel.ts"],"names":[],"mappings":"AAAA,MAAM,WAAW,cAAc;IAC7B,EAAE,EAAE,MAAM,CAAC;IACX,IAAI,EAAE,MAAM,CAAC;IACb,UAAU,EAAE,IAAI,CAAC;CAClB;AAED,MAAM,WAAW,gBAAgB;IAC/B,EAAE,EAAE,MAAM,CAAC;IACX,IAAI,EAAE,MAAM,CAAC;IACb,SAAS,EAAE,IAAI,CAAC;CACjB"}

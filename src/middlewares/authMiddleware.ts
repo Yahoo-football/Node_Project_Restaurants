@@ -26,6 +26,31 @@ class AuthMiddleware {
     }
   };
 
+  public authenticateOptional = (req: AuthenticatedRequest, _res: Response, next: NextFunction): void => {
+    const authorizationHeader = req.headers.authorization;
+
+    if (authorizationHeader?.startsWith('Bearer ')) {
+      const token = authorizationHeader.slice(7).trim();
+
+      try {
+        const decoded = jwt.verify(token, this.getJwtSecret()) as AuthTokenPayload;
+        req.authUser = decoded;
+        next();
+        return;
+      } catch {
+        _res.status(401).json({ message: 'Unauthorized' });
+        return;
+      }
+    }
+
+    req.authUser = {
+      id: Number(process.env.DEFAULT_CUSTOMER_ID ?? 1),
+      email: process.env.DEFAULT_CUSTOMER_EMAIL ?? 'customer@default.local',
+      role: 'customer',
+    } as AuthTokenPayload;
+    next();
+  };
+
   private getJwtSecret(): string {
     const secret = process.env.JWT_SECRET;
 

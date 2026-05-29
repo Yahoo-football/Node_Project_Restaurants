@@ -12,7 +12,7 @@ import {
 } from '../models/userModel.js';
 
 class AuthService {
-  private readonly allowedRoles: UserRole[] = ['admin', 'staff', 'customer'];
+  private readonly allowedRoles: UserRole[] = ['admin', 'customer'];
 
   public async register(data: RegisterUserInput): Promise<{ token: string; user: PublicUser }> {
     this.validateRegistrationInput(data);

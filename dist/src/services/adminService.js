@@ -3,8 +3,8 @@ import adminRepository from '../repositories/adminRepositories.js';
 import {} from '../models/adminModel.js';
 import { User } from '../models/userModel.js';
 class AdminService {
-    manageableRoles = ['admin', 'staff'];
-    allowedRoles = ['admin', 'staff', 'customer'];
+    manageableRoles = ['admin'];
+    allowedRoles = ['admin', 'customer'];
     async getUsers() {
         const users = await adminRepository.findAllUsers();
         return users.map((user) => new User(user).toPublicObject());
@@ -75,7 +75,7 @@ class AdminService {
             throw new Error('Password must be at least 6 characters long');
         }
         if (!this.manageableRoles.includes(data.role)) {
-            throw new Error('Admin can only create admin or staff accounts');
+            throw new Error('Admin can only create admin accounts');
         }
     }
     validateUpdateInput(data) {

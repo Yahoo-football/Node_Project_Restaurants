@@ -4,8 +4,8 @@ import { type AdminCreateUserInput, type AdminUpdateUserInput } from '../models/
 import { type PublicUser, type UserRole, User } from '../models/userModel.js';
 
 class AdminService {
-  private readonly manageableRoles: Array<Extract<UserRole, 'admin' | 'staff'>> = ['admin', 'staff'];
-  private readonly allowedRoles: UserRole[] = ['admin', 'staff', 'customer'];
+  private readonly manageableRoles: Array<Extract<UserRole, 'admin'>> = ['admin'];
+  private readonly allowedRoles: UserRole[] = ['admin', 'customer'];
 
   public async getUsers(): Promise<PublicUser[]> {
     const users = await adminRepository.findAllUsers();
@@ -95,7 +95,7 @@ class AdminService {
     }
 
     if (!this.manageableRoles.includes(data.role)) {
-      throw new Error('Admin can only create admin or staff accounts');
+      throw new Error('Admin can only create admin accounts');
     }
   }
 
