@@ -15,7 +15,6 @@ app.use('/api/admin', adminRouter);
 app.use('/api/cart', customerRouter);
 app.use('/api/menu', menuRouter);
 app.use('/api/orders', orderRouter);
-app.use('/api/payments', paymentRouter);
 
 app.get('/', (_req, res) => {
   res.status(200).json({

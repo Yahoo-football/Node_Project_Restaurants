@@ -4,6 +4,7 @@ declare class Database {
     private pool;
     private createConfig;
     private getOrCreatePool;
+    ensureDatabaseExists(): Promise<void>;
     connect(): Promise<void>;
     getConnection(): Promise<PoolConnection>;
     getPool(): Pool;

@@ -4,13 +4,13 @@ import mysql, { type Pool, type PoolConnection, type PoolOptions } from 'mysql2/
 class Database {
   private pool: Pool | null = null;
 
-  private createConfig(): PoolOptions {
+  private createConfig(database?: string): PoolOptions {
     return {
       host: process.env.DB_HOST || 'localhost',
       port: Number(process.env.DB_PORT) || 3306,
       user: process.env.DB_USER || 'root',
       password: process.env.DB_PASSWORD || '',
-      database: process.env.DB_NAME || 'restaurant_order_system',
+      database: database ?? (process.env.DB_NAME || 'restaurant_order_system'),
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,
@@ -25,7 +25,24 @@ class Database {
     return this.pool;
   }
 
+  public async ensureDatabaseExists(): Promise<void> {
+    const databaseName = process.env.DB_NAME || 'restaurant_order_system';
+    const tempPool = mysql.createPool(this.createConfig(undefined));
+
+    try {
+      await tempPool.query(`CREATE DATABASE IF NOT EXISTS \`${databaseName}\``);
+      console.log(`Ensured database exists: ${databaseName}`);
+    } finally {
+      await tempPool.end();
+    }
+  }
+
   public async connect(): Promise<void> {
+    const databaseName = process.env.DB_NAME || 'restaurant_order_system';
+
+    await this.ensureDatabaseExists();
+    this.pool = mysql.createPool(this.createConfig(databaseName));
+
     const connection = await this.getOrCreatePool().getConnection();
 
     try {
