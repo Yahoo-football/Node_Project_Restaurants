@@ -5,11 +5,12 @@ import { type AuthenticatedRequest } from '../middlewares/authMiddleware.js';
 class AuthController {
   public register = async (req: Request, res: Response): Promise<void> => {
     try {
+      const body = req.body ?? {};
       const result = await authService.register({
-        name: req.body.name,
-        email: req.body.email,
-        password: req.body.password,
-        phone: req.body.phone,
+        name: body.name,
+        email: body.email,
+        password: body.password,
+        phone: body.phone,
         role: 'customer',
       });
 
@@ -24,9 +25,10 @@ class AuthController {
 
   public login = async (req: Request, res: Response): Promise<void> => {
     try {
+      const body = req.body ?? {};
       const result = await authService.login({
-        email: req.body.email,
-        password: req.body.password,
+        email: body.email,
+        password: body.password,
       });
 
       res.status(200).json({

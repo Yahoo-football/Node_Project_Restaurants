@@ -58,6 +58,55 @@ class OrderRepository {
     return rows;
   }
 
+  public async createOrder(customerId: number, totalPrice: number): Promise<OrderRecord> {
+    const [result] = await database.getPool().execute<ResultSetHeader>(
+      'INSERT INTO orders (customer_id, total_price, status) VALUES (?, ?, ?)',
+      [customerId, totalPrice, 'pending'],
+    );
+
+    const created = await this.findOrderById(result.insertId);
+    if (!created) {
+      throw new Error('Unable to load created order');
+    }
+
+    return created;
+  }
+
+  public async createOrderItems(orderId: number, items: { menu_item_id: number; quantity: number; price: number }[]): Promise<void> {
+    if (items.length === 0) {
+      return;
+    }
+
+    const values: Array<number> = [];
+    const placeholders = items.map(() => '(?, ?, ?, ?)').join(', ');
+
+    for (const item of items) {
+      values.push(orderId, item.menu_item_id, item.quantity, item.price);
+    }
+
+    await database.getPool().execute<ResultSetHeader>(
+      `INSERT INTO order_items (order_id, menu_item_id, quantity, price) VALUES ${placeholders}`,
+      values,
+    );
+  }
+
+  public async findOrdersByCustomerId(customerId: number): Promise<OrderRecord[]> {
+    const [rows] = await database.getPool().execute<OrderRow[]>(
+      `SELECT
+        orders.*,
+        customers.name AS customer_name,
+        staff.name AS staff_name
+      FROM orders
+      INNER JOIN users AS customers ON customers.id = orders.customer_id
+      LEFT JOIN users AS staff ON staff.id = orders.staff_id
+      WHERE orders.customer_id = ?
+      ORDER BY orders.created_at DESC`,
+      [customerId],
+    );
+
+    return rows;
+  }
+
   public async updateOrderStatus(id: number, status: OrderStatus, staffId: number | null): Promise<void> {
     await database.getPool().execute<ResultSetHeader>(
       'UPDATE orders SET status = ?, staff_id = ? WHERE id = ?',

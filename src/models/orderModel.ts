@@ -20,6 +20,15 @@ export interface OrderItemRecord {
   price: number | string;
 }
 
+export interface CreateOrderItemInput {
+  menuItemId: number;
+  quantity: number;
+}
+
+export interface CreateOrderInput {
+  items: CreateOrderItemInput[];
+}
+
 export interface PublicOrderItem {
   id: number;
   menuItemId: number;
